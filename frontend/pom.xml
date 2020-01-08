@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>my-amazon</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>my-amazon-frontend</artifactId>
+  <name>my-amazon Backend</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <node.version>v10.14.2</node.version>
+    <npm.version>6.4.1</npm.version>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <failOnError>false</failOnError>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>dist/**/*.*</include>
+                <include>node/**/*.*</include>
+                <include>coverage/**/*.*</include>
+                <include>build/**/*.*</include>
+                <include>node_modules/**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install node</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>${node.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm build</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build --progress=false --build-optimizer --extract-css=false --aot</arguments>
+            </configuration>
+          </execution>
+<!--          <execution>-->
+<!--            <id>npm test</id>-->
+<!--            <phase>test</phase>-->
+<!--            <goals>-->
+<!--              <goal>npm</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <skip>${skipTests}</skip>-->
+<!--              <arguments>test</arguments>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+        </executions>
+      </plugin>
+      <!-- Use with: mvn package docker:build -->
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${fabric8.version}</version>
+        <configuration>
+          <images>
+            <image>
+              <name>my-amazon-frontend</name>
+              <alias>dockerfile</alias>
+              <build>
+                <!-- filter>@</filter-->
+                <contextDir>${project.basedir}/docker</contextDir>
+                <assembly>
+                  <mode>dir</mode>
+                  <inline xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+                          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+<!--                    <id>jolokia-it</id>-->
+                    <fileSets>
+                      <fileSet>
+                        <directory>${project.basedir}/dist</directory>
+                        <outputDirectory>./html</outputDirectory>
+                      </fileSet>
+                    </fileSets>
+                  </inline>
+                </assembly>
+<!--                <assembly>-->
+<!--                <descriptorRef>artifact-with-dependencies</descriptorRef>-->
+<!--                </assembly>-->
+                <tags>
+                  <tag>latest</tag>
+                  <tag>${project.version}</tag>
+                </tags>
+              </build>
+              <run>
+                <ports>
+                  <port>80:80</port>
+                </ports>
+              </run>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>ci</id>
+      <build>
+        <plugins>
+          <plugin><!-- Override arguments of "yarn test" execution to add CI tests -->
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>npm test</id>
+                <configuration>
+                  <arguments>run test:ci</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <!-- This is a hack to get Jenkins to publish Karma test results when running a Maven project: we run 0 surefire tests, so Jenkins publishes the report of the Karma tests. -->
+              <execution>
+                <id>dummySureFire</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>docker-ci</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+    </profile>
+    <!--
+    <profile>
+        <id>skipWebapp</id>
+        <activation>
+            <property>
+                <name>skipWebapp</name>
+            </property>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <configuration>
+                        <skipAssembly>true</skipAssembly>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    -->
+  </profiles>
+</project>
