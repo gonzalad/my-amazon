@@ -66,3 +66,22 @@ The module will contain the shared content that will be used by all other module
 ng g module modules/share
 ```
 
+
+### Functional Module
+
+Then creating a new functional module is just:
+
+* create module
+```
+ng g module modules/<name> --routing=true
+```
+* in the new module: add ShareModule in the imports attribute
+i.e.
+```
+ng g module modules/product --routing=true
+ng g component modules/product/components/product-list --module=product --flat=true 
+```
+* add a routerLink to this module, ie in main.component.html, I added
+```
+<a class="p-2 text-dark" [routerLink]="['/products']">Products</a>
+```
