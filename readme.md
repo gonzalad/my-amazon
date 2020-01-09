@@ -40,5 +40,20 @@ docker run --rm -p 80:80 my-amazon-frontend:latest
 
 ### Project setup
 
-Bootstrap installation: see https://awesome-angular.com/2019/03/10/bootstrap-angular-cli/
+#### Bootstrap installation
 
+see https://awesome-angular.com/2019/03/10/bootstrap-angular-cli/
+
+#### Main Module
+
+This module will represent the layout of the web site
+
+```
+ng g module main --module=app --routing=true 
+ng g component main/components/main --module=main 
+```
+And then :
+
+* add MainComponent in the bootstrap attribute of MainModule 
+* copy app.component.html content to main.component.html
+* replace app.component.html with `<router-outlet></router-outlet>`
