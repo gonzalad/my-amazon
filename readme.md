@@ -49,8 +49,8 @@ see https://awesome-angular.com/2019/03/10/bootstrap-angular-cli/
 This module will represent the layout of the web site
 
 ```
-ng g module main --module=app --routing=true 
-ng g component main/components/main --module=main 
+ng g module modules/main --module=app --routing=true 
+ng g component modules/main/components/main --module=main 
 ```
 And then :
 
@@ -63,6 +63,6 @@ And then :
 The module will contain the shared content that will be used by all other modules (i.e. dialog components, ...)
 
 ```
-ng g module share
+ng g module modules/share
 ```
 
