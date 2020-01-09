@@ -57,3 +57,12 @@ And then :
 * add MainComponent in the bootstrap attribute of MainModule 
 * copy app.component.html content to main.component.html
 * replace app.component.html with `<router-outlet></router-outlet>`
+
+### Share Module
+
+The module will contain the shared content that will be used by all other modules (i.e. dialog components, ...)
+
+```
+ng g module share
+```
+
