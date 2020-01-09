@@ -34,3 +34,11 @@ docker run --rm -p 8080:8080 my-amazon-backend:latest
 # frontend
 docker run --rm -p 80:80 my-amazon-frontend:latest
 ```
+
+
+## Front end instructions
+
+### Project setup
+
+Bootstrap installation: see https://awesome-angular.com/2019/03/10/bootstrap-angular-cli/
+
