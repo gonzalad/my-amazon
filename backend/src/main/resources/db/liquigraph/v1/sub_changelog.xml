@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <changelog xmlns="https://liquigraph.github.io/schema/1.0/liquigraph.xsd">
+    <changeset id="product-gloomhaven" author="you">
+        <query>CREATE (p:Product {name:'Gloomhaven', id: 'da58ba02-4010-4531-bf33-37fb3628778c'}) RETURN p</query>
+    </changeset>
 </changelog>
