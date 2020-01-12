@@ -1,5 +1,8 @@
 package com.example.myamazon.event;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
@@ -16,15 +19,18 @@ import java.util.StringJoiner;
  */
 public abstract class EntityEvent<E> extends ApplicationEvent implements ResolvableTypeProvider {
 
-    public EntityEvent(E entity) {
+    @JsonCreator
+    public EntityEvent(@JsonProperty("source") E entity) {
         super(entity);
     }
 
+    @JsonIgnore
     public E getEntity() {
         return (E) super.getSource();
     }
 
     @Override
+    @JsonIgnore
     public ResolvableType getResolvableType() {
         return ResolvableType.forClassWithGenerics(getClass(), ResolvableType.forInstance(getSource()));
     }

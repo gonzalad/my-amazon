@@ -104,7 +104,7 @@ const routes: Routes = [
 ];
 ```
 
-##Neo4j Primer
+## Neo4j Primer
 
 start neo4j with `neo4j console`
 neo4j browser is available at http://localhost:7474/browser/
@@ -125,3 +125,35 @@ Database migrations
 http://www.liquigraph.org/
 see also https://stackoverflow.com/a/40610291
 see also https://github.com/liquigraph/liquigraph/tree/master/liquigraph-examples/spring-boot
+
+## Kafka
+
+The application connects to kafka on startup.
+
+It will create the topic entity.event on startup (if the listener is enabled) or when the first message is sent.
+
+Messages are sent whenever an entity is created/updated (i.e a given product is updated).
+
+For now, messages are sent in JSON format.
+
+### Starting Kafka
+
+```
+# start zookeeper 
+bin/zookeeper-server-start.sh config/zookeeper.properties
+# start kafka server
+bin/kafka-server-start.sh config/server.properties
+```
+See https://kafka.apache.org/quickstart
+
+The application creates a topic on startup/first usage.
+
+### UI
+
+I'm using Kafdrop from https://github.com/obsidiandynamics/kafdrop
+
+See also https://dzone.com/articles/kafka-administration-and-monitoring-ui-tools
+
+```
+java --add-opens=java.base/sun.nio.ch=ALL-UNNAMED -jar kafdrop-3.19.0.jar 
+```

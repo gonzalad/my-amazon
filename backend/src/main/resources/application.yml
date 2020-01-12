@@ -1,8 +1,26 @@
-spring.data.neo4j.username=neo4j
-spring.data.neo4j.password=secret
-
-# for liquigraph
-spring.datasource.url=jdbc:neo4j:http://localhost
-spring.datasource.driver-class-name=org.neo4j.jdbc.http.HttpDriver
-spring.datasource.username=${spring.data.neo4j.username}
-spring.datasource.password=${spring.data.neo4j.password}
+neo4j:
+  host: localhost
+spring:
+  application:
+    name: my-amazon
+  data:
+    neo4j:
+      uri: bolt://${neo4j.host}
+      username: neo4j
+      password: secret
+  # datasource used by liquigraph
+  datasource:
+    url: jdbc:neo4j:http://${neo4j.host}
+    driver-class-name: org.neo4j.jdbc.http.HttpDriver
+    username: ${spring.data.neo4j.username}
+    password: ${spring.data.neo4j.password}
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: ${spring.application.name}
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.example.myamazon.event,com.example.myamazon.product
