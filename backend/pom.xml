@@ -60,6 +60,14 @@
             <scope>runtime</scope>
         </dependency>
         <!-- liquibase:END -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -96,6 +104,27 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>schemas</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <stringType>String</stringType>
+                            <imports>
+                                <import>${project.basedir}/src/main/avro/eventSource.avsc</import>
+                                <import>${project.basedir}/src/main/avro/eventHeader.avsc</import>
+                                <import>${project.basedir}/src/main/avro/product.avsc</import>
+                            </imports>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Use with: mvn package docker:build -->
             <plugin>

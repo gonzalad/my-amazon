@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "ProductEvent",
+  "namespace": "com.example.myamazon.event",
+  "fields": [
+    {
+      "name": "header",
+      "type": "com.example.myamazon.event.EventHeader"
+    },
+    {
+      "name": "payload",
+      "type": "com.example.myamazon.event.Product"
+    }
+  ]
+}

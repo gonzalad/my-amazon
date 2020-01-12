@@ -17,10 +17,15 @@ spring:
   kafka:
     producer:
       bootstrap-servers: localhost:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://localhost:8081
     consumer:
       group-id: ${spring.application.name}
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
         spring.json.trusted.packages: com.example.myamazon.event,com.example.myamazon.product
+        schema.registry.url: http://localhost:8081
+        specific.avro.reader: true

@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "EventSource",
+  "namespace": "com.example.myamazon.event",
+  "fields": [
+    {
+      "name": "application",
+      "type": "string"
+    }
+  ]
+}

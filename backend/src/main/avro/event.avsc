@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "Event",
+  "namespace": "com.example.myamazon.event",
+  "fields": [
+    {
+      "name": "header",
+      "type": "com.example.myamazon.event.EventHeader"
+    }
+  ]
+}

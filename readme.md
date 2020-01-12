@@ -21,10 +21,40 @@ mvn clean package docker:build
 
 ## Run
 
+Start db and middleware:
+
+* neo4j:
+```
+cd $NEO4J_HOME/bin
+neo4j console
+```
+* Zookeeper (needed by kafka and Avro Schema Registry)
+```
+cd $KAFKA_HOME
+bin\windows\zookeeper-server-start.bat config/zookeeper.properties
+```
+* Kafka
+```
+cd $KAFKA_HOME
+bin\windows\kafka-server-start.bat config/zookeeper.properties
+```
+* Schema Registry
+```
+cd $CONFLUENT_HOME
+bin\windows\schema-registry-start.bat etc/schema-registry/schema-registry.properties
+```
+
 Either directly from the IDE or command line:
 
 * backend: start main class MyAmazonApplication from Intellij
 * frontend: execute `npm run start`
+
+Liquigraph will be executed on startup and will create an initial product (id=da58ba02-4010-4531-bf33-37fb3628778c)
+
+## Run with docker
+
+TODO: need to update those instructions, I added some dependencies since initial work (neo5j, kafka)
+and need to create a docker-compose to start those elements.
 
 Or start the docker images:
 
@@ -35,6 +65,18 @@ docker run --rm -p 8080:8080 my-amazon-backend:latest
 docker run --rm -p 80:80 my-amazon-frontend:latest
 ```
 
+ 
+## Test
+
+* Update a given product:
+```
+curl --location --request PUT 'http://localhost:8080/products/da58ba02-4010-4531-bf33-37fb3628778c' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "id": "da58ba02-4010-4531-bf33-37fb3628778c",
+        "name": "Gloomhavens"
+    }'
+```
 
 ## Front end instructions
 
@@ -134,7 +176,7 @@ It will create the topic entity.event on startup (if the listener is enabled) or
 
 Messages are sent whenever an entity is created/updated (i.e a given product is updated).
 
-For now, messages are sent in JSON format.
+Messages are sent in Avro format.
 
 ### Starting Kafka
 
@@ -148,7 +190,16 @@ See https://kafka.apache.org/quickstart
 
 The application creates a topic on startup/first usage.
 
-### UI
+### Kafka CLI
+
+Some commands:
+
+```
+# delete topic entity.event (works only if delete.topic.enable=true in kafka server.properties)
+kafka-topics.bat --zookeeper 127.0.0.1:2181 --delete --topic entity.event
+```
+
+### Kafka UI
 
 I'm using Kafdrop from https://github.com/obsidiandynamics/kafdrop
 
@@ -157,3 +208,22 @@ See also https://dzone.com/articles/kafka-administration-and-monitoring-ui-tools
 ```
 java --add-opens=java.base/sun.nio.ch=ALL-UNNAMED -jar kafdrop-3.19.0.jar 
 ```
+
+### Avro
+
+Data sent on kafka is serialized in Avro format.
+
+All Avro schemas are registered in the Schema registry.
+
+#### Schema registry installation
+
+You'll need to download the schema registry server from https://fr.confluent.io/download/
+(it's a community feature).
+If you're running under windows, you'll need to download the .bat files 
+from https://github.com/renukaradhya/confluentplatform/tree/master/bin/windows
+
+All avro files are first written in src/main/avro folder
+
+### Development
+
+See https://www.baeldung.com/spring-cloud-stream-kafka-avro-confluent
