@@ -81,7 +81,47 @@ i.e.
 ng g module modules/product --routing=true
 ng g component modules/product/components/product-list --module=product --flat=true 
 ```
-* add a routerLink to this module, ie in main.component.html, I added
+* add a route in parent module, i.e. I added this to main-routing.module.ts (I use lazy loaded modules here)
+```
+children: [
+  {
+    path: 'products',
+    loadChildren: () => import('../product/product.module').then(mod => mod.ProductModule)
+  }
+]
+```
+* add a routerLink to the previous route, ie in main.component.html, I added
 ```
 <a class="p-2 text-dark" [routerLink]="['/products']">Products</a>
 ```
+* in product-routing.module.ts, define a main component when we arrive at /product:
+```
+const routes: Routes = [
+  {
+    path: '',
+    component: ProductListComponent,
+  }
+];
+```
+
+##Neo4j Primer
+
+start neo4j with `neo4j console`
+neo4j browser is available at http://localhost:7474/browser/
+
+Sample queries:
+* MATCH (p:product) RETURN p
+* (p:Person {name: "Jennifer"})-[rel:LIKES]->(g:Technology {type: "Graphs"})
+* CREATE (p:Product {name: 'The Lord of the rings'})
+  RETURN p
+see https://neo4j.com/developer/cypher-basics-i/
+see https://neo4j.com/developer/guide-build-a-recommendation-engine/
+see https://medium.com/neo4j/neo4j-ogm-and-spring-data-neo4j-a55a866df68c about ids
+
+Neo4j OGM
+https://neo4j.com/docs/ogm-manual/current/tutorial/#tutorial:introduction
+
+Database migrations
+http://www.liquigraph.org/
+see also https://stackoverflow.com/a/40610291
+see also https://github.com/liquigraph/liquigraph/tree/master/liquigraph-examples/spring-boot
